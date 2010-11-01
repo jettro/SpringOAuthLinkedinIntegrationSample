@@ -1,0 +1,13 @@
+# used to ignore certain files by git
+# mac osx files
+.DS_Store
+#gradle build files
+.gradle
+build
+# intellij files
+.idea/*
+*.ipr
+*.iws
+*.iml
+target/
+out/*
