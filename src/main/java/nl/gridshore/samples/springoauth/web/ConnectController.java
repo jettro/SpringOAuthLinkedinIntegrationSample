@@ -97,20 +97,38 @@ public class ConnectController {
      */
     @RequestMapping(value = "linkedin/connections", method = RequestMethod.GET)
     public String connections(WebRequest request) {
-        Token accessToken = obtainAccessTokenFromSession(request);
-        if (accessToken == null) {
-            throw new RuntimeException("An access token must be available here");
-        }
-        LinkedInTemplate template = new LinkedInTemplate(
-                apiKey,
-                apiSecret,
-                accessToken.getToken(),
-                accessToken.getSecret());
+        LinkedInTemplate template = createLinkedInTemplate(request);
 
         List<LinkedInProfile> connections = template.getConnections();
         request.setAttribute("connections", connections, WebRequest.SCOPE_REQUEST);
 
         return "connections";
+    }
+
+    /**
+     * Handles the request to obtain the profile of the current logged in user
+     * @param request Spring provided WebRequest
+     * @return String representing the name of the view to show
+     */
+    @RequestMapping(value = "linkedin/profile", method = RequestMethod.GET)
+    public String profile(WebRequest request) {
+        LinkedInTemplate template = createLinkedInTemplate(request);
+
+        LinkedInProfile userProfile = template.getUserProfile();
+        request.setAttribute("profile", userProfile, WebRequest.SCOPE_REQUEST);
+        return "profile";
+    }
+
+    private LinkedInTemplate createLinkedInTemplate(WebRequest request) {
+        Token accessToken = obtainAccessTokenFromSession(request);
+        if (accessToken == null) {
+            throw new RuntimeException("An access token must be available here");
+        }
+        return new LinkedInTemplate(
+                apiKey,
+                apiSecret,
+                accessToken.getToken(),
+                accessToken.getSecret());
     }
 
     private Token obtainRequestTokenFromSession(WebRequest request) {
