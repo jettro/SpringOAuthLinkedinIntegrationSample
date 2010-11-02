@@ -11,3 +11,4 @@ build
 *.iml
 target/
 out/*
+src/main/resources/config.properties
