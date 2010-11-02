@@ -13,24 +13,19 @@ import org.scribe.services.HMACSha1SignatureService;
 import org.scribe.services.TimestampServiceImpl;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.client.CommonsClientHttpRequestFactory;
 import org.springframework.social.linkedin.LinkedInProfile;
 import org.springframework.social.linkedin.LinkedInTemplate;
-import org.springframework.social.oauth.OAuthSigningClientHttpRequestFactory;
-import org.springframework.social.oauth1.OAuth1ClientRequestSigner;
-import org.springframework.social.oauth1.OAuth1RequestSignerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestOperations;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller that handles all connect requests. It support GET requests for checking current connectivity and POST
- * requests to handle the authorization requests.
+ * <p>Controller that handles all linkedin connect requests. It contains methods to request information from linkedin.
+ * as well as methods to handle the authentication with linkedin using OAuth and the spring-social project.</p>
  *
  * @author Jettro Coenradie
  */
@@ -43,6 +38,13 @@ public class ConnectController {
     private String apiSecret;
     private String callbackUrl;
 
+    /**
+     * Shows a page that enables you to start the connection process if you have not connected yet. If you did connect,
+     * a page is shown with the actions you can perform.
+     *
+     * @param request Spring provided WebRequest
+     * @return String representing the name of the view to show
+     */
     @RequestMapping(value = "linkedin", method = RequestMethod.GET)
     public String showConnectLinkedin(WebRequest request) {
         Token accessToken = obtainAccessTokenFromSession(request);
@@ -53,6 +55,12 @@ public class ConnectController {
         }
     }
 
+    /**
+     * Redirects the use to the linkedin authentication service
+     *
+     * @param request Spring provided WebRequest
+     * @return String representing the name of the view to show
+     */
     @RequestMapping(value = "linkedin", method = RequestMethod.POST)
     public String requestConnectionLinkedin(WebRequest request) {
 
@@ -62,9 +70,16 @@ public class ConnectController {
         return "redirect:" + "https://www.linkedin.com/uas/oauth/authorize?oauth_token=" + requestToken.getToken();
     }
 
-    @RequestMapping(value="linkedin", method=RequestMethod.GET, params="oauth_token")
-    public String authorizeCallback(@RequestParam("oauth_token") String token,
-                                    @RequestParam(value="oauth_verifier", defaultValue="verifier") String verifier,
+    /**
+     * Handles the callback from Linkedin. Uses the RequestToken to obtain the AccessToken. The AccessToken is stored
+     * in the session to be used for later on.
+     *
+     * @param verifier String containing a string provided by Linkedin to use for varifying the request token.
+     * @param request  Spring provided WebRequest
+     * @return String representing the name of the view to show
+     */
+    @RequestMapping(value = "linkedin", method = RequestMethod.GET, params = "oauth_token")
+    public String authorizeCallback(@RequestParam(value = "oauth_verifier", defaultValue = "verifier") String verifier,
                                     WebRequest request) {
         Token requestToken = obtainRequestTokenFromSession(request);
         Token accessToken = getOAuthService().getAccessToken(requestToken, new Verifier(verifier));
@@ -74,6 +89,12 @@ public class ConnectController {
 
     }
 
+    /**
+     * Handles the request to obtain all the connections from the current logged in user.
+     *
+     * @param request Spring provided WebRequest
+     * @return String representing the name of the view to show
+     */
     @RequestMapping(value = "linkedin/connections", method = RequestMethod.GET)
     public String connections(WebRequest request) {
         Token accessToken = obtainAccessTokenFromSession(request);
@@ -87,16 +108,13 @@ public class ConnectController {
                 accessToken.getSecret());
 
         List<LinkedInProfile> connections = template.getConnections();
-        List<String> names = new ArrayList<String>();
-        for (LinkedInProfile theProfile : connections) {
-            names.add(theProfile.getLastName());
-        }
-        request.setAttribute("names",names,WebRequest.SCOPE_REQUEST);
+        request.setAttribute("connections", connections, WebRequest.SCOPE_REQUEST);
+
         return "connections";
     }
 
     private Token obtainRequestTokenFromSession(WebRequest request) {
-        return (Token)request.getAttribute(OAUTH_REQUEST_TOKEN_ATTRIBUTE, WebRequest.SCOPE_SESSION);
+        return (Token) request.getAttribute(OAUTH_REQUEST_TOKEN_ATTRIBUTE, WebRequest.SCOPE_SESSION);
     }
 
     private OAuthService getOAuthService() {
@@ -108,12 +126,20 @@ public class ConnectController {
         config.setApiKey(apiKey);
         config.setApiSecret(apiSecret);
         config.setCallback(callbackUrl);
-        return new OAuth10aServiceImpl(new HMACSha1SignatureService(), new TimestampServiceImpl(), new BaseStringExtractorImpl(), new HeaderExtractorImpl(), new TokenExtractorImpl(), new TokenExtractorImpl(), config);
+
+        return new OAuth10aServiceImpl(
+                new HMACSha1SignatureService(),
+                new TimestampServiceImpl(),
+                new BaseStringExtractorImpl(),
+                new HeaderExtractorImpl(),
+                new TokenExtractorImpl(),
+                new TokenExtractorImpl(),
+                config);
     }
 
 
     private Token obtainAccessTokenFromSession(WebRequest request) {
-        return (Token)request.getAttribute(OAUTH_ACCESS_TOKEN_ATTRIBUTE, WebRequest.SCOPE_SESSION);
+        return (Token) request.getAttribute(OAUTH_ACCESS_TOKEN_ATTRIBUTE, WebRequest.SCOPE_SESSION);
     }
 
     @Required
