@@ -48,10 +48,11 @@
     </build>
 
     <properties>
-        <slf4j.version>1.5.8</slf4j.version>
-        <spring.version>3.0.4.RELEASE</spring.version>
-        <spring.security.version>3.0.3.RELEASE</spring.security.version>
+        <slf4j.version>1.6.1</slf4j.version>
+        <spring.version>3.1.0.M1</spring.version>
+        <spring.security.version>3.1.0.RC1</spring.security.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-social.version>1.0.0.M2</spring-social.version>
     </properties>
 
 	<dependencies>
@@ -81,14 +82,49 @@
 		<dependency>
 			<groupId>org.springframework.social</groupId>
 			<artifactId>spring-social-core</artifactId>
-        	<version>1.0.0.M1</version>
+        	<version>${spring-social.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.social</groupId>
+            <artifactId>spring-social-linkedin</artifactId>
+            <version>${spring-social.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.social</groupId>
+            <artifactId>spring-social-twitter</artifactId>
+            <version>${spring-social.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.social</groupId>
+            <artifactId>spring-social-web</artifactId>
+            <version>${spring-social.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
 
         <!-- Scribe OAuth 1.0 Consumer API -->
         <dependency>
             <groupId>org.scribe</groupId>
             <artifactId>scribe</artifactId>
-            <version>1.0.7</version>
+            <version>1.1.1</version>
         </dependency>
 
         <!-- web dependencies -->
@@ -122,26 +158,16 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.15</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.jdmk</groupId>
-                    <artifactId>jmxtools</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.jmx</groupId>
-                    <artifactId>jmxri</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.mail</groupId>
-                    <artifactId>mail</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.jms</groupId>
-                    <artifactId>jms</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1.2.16</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+        </dependency>
+
+        <!-- other dependencies -->
+
 	</dependencies>
 	
 	<repositories>

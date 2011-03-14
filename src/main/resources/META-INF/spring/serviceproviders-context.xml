@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:property-placeholder location="classpath:config.properties,classpath:jdbc.properties"/>
+
+    <bean class="org.springframework.social.twitter.connect.TwitterServiceProvider">
+        <constructor-arg value="${twitter.consumerKey}" />
+        <constructor-arg value="${twitter.consumerSecret}" />
+        <constructor-arg ref="connectionRepository" />
+    </bean>
+
+    <bean class="org.springframework.social.linkedin.connect.LinkedInServiceProvider">
+        <constructor-arg value="${linkedin.api.key}"/>
+        <constructor-arg value="${linkedin.api.secret}"/>
+        <constructor-arg ref="connectionRepository"/>
+    </bean>
+
+    <!-- Configure a connection repository through which account-to-provider connections will be stored -->
+    <bean id="connectionRepository" class="org.springframework.social.connect.jdbc.JdbcConnectionRepository">
+        <constructor-arg ref="dataSource"/>
+        <constructor-arg ref="textEncryptor"/>
+    </bean>
+
+    <bean id="textEncryptor" class="org.springframework.security.crypto.encrypt.Encryptors" factory-method="noOpText"/>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+
+</beans>

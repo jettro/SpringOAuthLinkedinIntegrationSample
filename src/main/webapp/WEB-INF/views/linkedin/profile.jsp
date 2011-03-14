@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<jsp:include page="inc/header.jsp"/>
-<jsp:include page="inc/navigation.jsp"/>
+<jsp:include page="../inc/header.jsp"/>
+<jsp:include page="../inc/navigation.jsp"/>
 <table>
     <tr>
         <td>First name</td>
@@ -23,4 +23,4 @@
         <td><c:out value="${profile.industry}" /></td>
     </tr>
 </table>
-<jsp:include page="inc/footer.jsp"/>
+<jsp:include page="../inc/footer.jsp"/>
